@@ -1,4 +1,4 @@
 [webservers]
-172.31.87.30 ansible_user=ubuntu ansible_ssh_private_key_file=/path/to/key.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-172.31.80.18 ansible_user=ubuntu ansible_ssh_private_key_file=/path/to/key.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
-172.31.91.117 ansible_user=ubuntu ansible_ssh_private_key_file=/path/to/key.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+172.31.87.30 ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/devops_practice/anisble/ansible-key.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+172.31.80.18 ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/devops_practice/anisble/ansible-key.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+172.31.91.117 ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/devops_practice/anisble/ansible-key.pem ansible_ssh_common_args='-o StrictHostKeyChecking=no'
