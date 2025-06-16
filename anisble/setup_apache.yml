@@ -25,3 +25,26 @@
       ansible.builtin.apt:
         name: phpmyadmin
         state: present
+
+    - name: Create directory
+      file:
+        path: /tmp/my_directory
+        state: directory
+
+    - name: Create file
+      command: "touch /tmp/my_directory/my_file.txt"
+
+    - name: Install package using apt
+      ansible.builtin.apt:
+        name: my_package
+        state: present
+
+    - name: Set UFW default policy to allow
+      community.general.ufw:
+        state: enabled
+        policy: allow
+        direction: incoming
+        
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled
