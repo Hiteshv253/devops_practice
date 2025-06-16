@@ -1,68 +1,72 @@
 ---
-- name: Install Apache on Ubuntu
+- name: Install Apache and related services on Ubuntu
   hosts: all
   become: yes
 
   tasks:
-- name: Install nginx 
-  ansible.builtin.apt:
-    name: nginx
-    state: present
-    update_cache: yes
 
-- name: Stop nginx if running
-  ansible.builtin.service:
-    name: nginx
-    state: stopped
-    enabled: no
+    # 1. Install nginx
+    - name: Install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes
 
-- name: Ensure apache2 is installed
-  ansible.builtin.apt:
-    name: apache2
-    state: present
+    # 2. Stop and disable nginx so it doesn't conflict with Apache
+    - name: Stop and disable nginx
+      ansible.builtin.service:
+        name: nginx
+        state: stopped
+        enabled: no
 
-- name: Ensure apache2 is running and enabled
-  ansible.builtin.service:
-    name: apache2
-    state: started
-    enabled: yes
+    # 3. Install Apache2
+    - name: Install apache2
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: yes
 
-- name: Install Apache
-  ansible.builtin.apt:
-    name: apache2
-    state: present
-    update_cache: yes
+    # 4. Ensure Apache2 is running and enabled at boot
+    - name: Ensure apache2 is running and enabled
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: yes
 
-- name: Start and enable Apache
-  ansible.builtin.service:
-    name: apache2
-    state: started
-    enabled: yes
+    # 5. Install mysql client (the correct package is usually 'mysql-client' or 'mysql-client-core-8.0' on Ubuntu)
+    - name: Install mysql client
+      ansible.builtin.apt:
+        name: mysql-client
+        state: present
 
-- name: install mysql client to node server
-  ansible.builtin.apt:
-    name: mysql
-    state: present
+    # 6. Install phpmyadmin
+    - name: Install phpmyadmin
+      ansible.builtin.apt:
+        name: phpmyadmin
+        state: present
 
-- name: install phpmyadmin
-  ansible.builtin.apt:
-    name: phpmyadmin
-    state: present
+    # 7. Create a directory
+    - name: Create directory
+      ansible.builtin.file:
+        path: /tmp/my_directory
+        state: directory
 
-- name: Create directory
-  file:
-    path: /tmp/my_directory
-    state: directory
+    # 8. Create a file inside that directory
+    - name: Create file
+      ansible.builtin.file:
+        path: /tmp/my_directory/my_file.txt
+        state: touch
 
-- name: Create file
-  command: "touch /tmp/my_directory/my_file.txt"
+    # 9. Enable UFW and set default incoming policy to allow (note: usually 'allow' is not recommended as default)
+    - name: Allow SSH, HTTP and HTTPS through UFW
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+      loop:
+        - 22
+        - 80
+        - 443
 
-- name: Set UFW default policy to allow
-  community.general.ufw:
-    state: enabled
-    policy: allow
-    direction: incoming
-
-- name: Enable UFW
-  community.general.ufw:
-    state: enabled
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled

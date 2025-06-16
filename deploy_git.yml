@@ -1,0 +1,86 @@
+---
+- name: Deploy a Git project and serve with Apache and NGINX
+  hosts: all
+  become: yes
+
+  vars:
+    git_repo: "https://github.com/Hiteshv253/zenerativeminds.com.git"
+    web_root_apache: "/var/www/html"
+    web_root_nginx: "/var/www/nginx_html"
+
+  tasks:
+
+    - name: Install Apache
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Install NGINX
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Ensure Apache is started and enabled
+      ansible.builtin.service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Ensure NGINX is started and enabled
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Ensure Git is installed
+      ansible.builtin.apt:
+        name: git
+        state: present
+
+    - name: Create web root for NGINX
+      ansible.builtin.file:
+        path: "{{ web_root_nginx }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+
+    - name: Clone project for Apache
+      ansible.builtin.git:
+        repo: "{{ git_repo }}"
+        dest: "{{ web_root_apache }}"
+        force: yes
+
+    - name: Clone project for NGINX
+      ansible.builtin.git:
+        repo: "{{ git_repo }}"
+        dest: "{{ web_root_nginx }}"
+        force: yes
+
+    - name: Adjust permissions for Apache web root
+      ansible.builtin.file:
+        path: "{{ web_root_apache }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    - name: Adjust permissions for NGINX web root
+      ansible.builtin.file:
+        path: "{{ web_root_nginx }}"
+        state: directory
+        owner: www-data
+        group: www-data
+        recurse: yes
+
+    - name: Restart Apache
+      ansible.builtin.service:
+        name: apache2
+        state: restarted
+
+    - name: Restart NGINX
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
