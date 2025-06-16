@@ -1,0 +1,20 @@
+---
+- name: Simple playbook to install and start Apache
+  hosts: all
+  become: yes   # run tasks with sudo
+
+  tasks:
+    - name: Install Apache package
+      ansible.builtin.yum:
+        name: httpd
+        state: present
+
+    - name: Start Apache service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+
+    - name: Enable Apache to start on boot
+      ansible.builtin.service:
+        name: httpd
+        enabled: yes
