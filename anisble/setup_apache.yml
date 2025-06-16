@@ -4,6 +4,25 @@
   become: yes
 
   tasks:
+    - name: Install nginx 
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes
+    
+    - name: Ensure nginx is running
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+        port: 90
+
+    - name: Write Apache install status to file
+      lineinfile:
+        path: /tmp/sw_status.txt
+        line: "apache2 installed successfully!!"
+        create: yes
+
     - name: Install Apache
       ansible.builtin.apt:
         name: apache2
@@ -18,7 +37,7 @@
 
     - name: install mysql client to node server
       ansible.builtin.apt:
-        name: mysql-client
+        name: mysql
         state: present
 
     - name: install phpmyadmin
@@ -34,17 +53,13 @@
     - name: Create file
       command: "touch /tmp/my_directory/my_file.txt"
 
-    - name: Install package using apt
-      ansible.builtin.apt:
-        name: my_package
-        state: present
 
     - name: Set UFW default policy to allow
       community.general.ufw:
         state: enabled
         policy: allow
         direction: incoming
-        
+
     - name: Enable UFW
       community.general.ufw:
         state: enabled
