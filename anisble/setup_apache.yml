@@ -15,3 +15,13 @@
         name: apache2
         state: started
         enabled: yes
+
+    - name: install mysql client to node server
+      ansible.builtin.apt:
+        name: mysql-client
+        state: present
+
+    - name: install phpmyadmin
+      ansible.builtin.apt:
+        name: phpmyadmin
+        state: present
