@@ -1,17 +1,15 @@
 ---
-- hosts: host1
-  become: yes
-  name: Play 1
+
+- name: Network Getting Started First Playbook
+  connection: ansible.netcommon.network_cli
+  gather_facts: false
+  hosts: all
   tasks:
-    - name: Execute command ‘Date’
-      command: date
-    - name: Execute script on server
-      script: test_script.sh
-- hosts: host2
-  name: Play 2
-  become: yes
-  tasks:
-    - name: Execute script on server
-      script: test_script.sh
-    - name: Install nginx
-      apt: name=nginx state=latest
+
+    - name: Get config for VyOS devices
+      vyos.vyos.vyos_facts:
+        gather_subset: all
+
+    - name: Display the config
+      debug:
+        msg: "The hostname is {{ ansible_net_hostname }} and the OS is {{ ansible_net_version }}"
