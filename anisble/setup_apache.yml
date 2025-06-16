@@ -10,17 +10,16 @@
         state: present
         update_cache: yes
     
-    - name: Ensure nginx is running
+    - name: Ensure nginx is running and enabled
       ansible.builtin.service:
         name: nginx
         state: started
         enabled: yes
-        port: 90
 
-    - name: Write Apache install status to file
+    - name: Write nginx install status to file
       lineinfile:
         path: /tmp/sw_status.txt
-        line: "apache2 installed successfully!!"
+        line: "nginx installed successfully!!"
         create: yes
 
     - name: Install Apache
