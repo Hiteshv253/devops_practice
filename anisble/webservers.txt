@@ -1,2 +1,4 @@
 [webservers]
-192.168.1.10 ansible_user=root
+172.31.91.117 ansible_user=root
+172.31.87.30 ansible_user=root
+172.31.80.18 ansible_user=root
