@@ -1,6 +1,8 @@
 [webservers]
 192.168.190.171 ansible_user=aws ansible_password=root ansible_become_password=root
-192.168.190.172 ansible_user=aws ansible_password=root ansible_become_password=root
-192.168.190.173 ansible_user=aws ansible_password=root ansible_become_password=root
+#192.168.190.172 ansible_user=aws ansible_password=root ansible_become_password=root
+#192.168.190.173 ansible_user=aws ansible_password=root ansible_become_password=root
 
 #ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i server.txt ansible-paybook.yml
+
+#ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i server.txt install_webservers.yml

@@ -1,9 +1,32 @@
 ---
-- name: Install Nginx and Apache with service checks and status file
-  hosts: webservers   # <-- Replace with your inventory group or host(s)
+- name: Install Nginx and Apache with status check
+  hosts: all
   become: yes
 
   tasks:
+
+    - name: Remove dpkg lock files and corrupted update files
+      ansible.builtin.shell: |
+        rm -f /var/lib/dpkg/lock-frontend
+        rm -f /var/lib/dpkg/lock
+        rm -f /var/cache/apt/archives/lock
+        rm -f /var/lib/dpkg/updates/*
+      become: yes
+
+    - name: Reconfigure dpkg database
+      ansible.builtin.shell: dpkg --configure -a
+      become: yes
+
+    - name: Ensure dpkg is not interrupted
+      ansible.builtin.shell: dpkg --configure -a
+      register: dpkg_result
+      changed_when: "'cannot' not in dpkg_result.stderr"
+
+    - name: Remove dpkg lock files
+      ansible.builtin.shell: |
+        rm -f /var/lib/dpkg/lock-frontend
+        rm -f /var/lib/dpkg/lock
+        rm -f /var/cache/apt/archives/lock
 
     - name: Install Nginx
       ansible.builtin.apt:
@@ -13,38 +36,35 @@
 
     - name: Write Nginx status to file
       ansible.builtin.copy:
-        dest: /tmp/sw_status.txt
         content: "nginx installed successfully!!\n"
+        dest: /tmp/sw_status.txt
 
-    - name: Ensure Nginx is started
-      ansible.builtin.service:
-        name: nginx
-        state: started
-        enabled: yes
-
-    - name: Install Apache (httpd)
+    - name: Install Apache2
       ansible.builtin.apt:
         name: apache2
         state: present
+        update_cache: yes
 
     - name: Append Apache status to file
       ansible.builtin.lineinfile:
         path: /tmp/sw_status.txt
         line: "apache installed successfully!!"
 
-    - name: Stop Nginx to free port 80
+    - name: Stop Nginx
       ansible.builtin.service:
         name: nginx
         state: stopped
+
+    - name: Gather service facts
+      ansible.builtin.service_facts:
 
     - name: Start Apache only if Nginx is stopped
       ansible.builtin.service:
         name: apache2
         state: started
-      when: >
-        ansible_facts.services['nginx.service'].state == 'stopped'
-      vars:
-        ansible_facts:
-          services: "{{ ansible_facts.services | default({}) | combine({'nginx.service': {'state': 'stopped'}}) }}"
-      # fallback in case service facts are not available
+      when: ansible_facts.services['nginx'].state == 'stopped'
 
+    - name: Ensure Apache is enabled at boot
+      ansible.builtin.service:
+        name: apache2
+        enabled: yes
