@@ -1,0 +1,7 @@
+---
+# handlers/main.yml
+
+- name: Restart Apache Service
+  ansible.builtin.service:
+    name: apache2
+    state: restarted

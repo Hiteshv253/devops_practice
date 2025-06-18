@@ -36,7 +36,7 @@
 
     - name: Write Nginx status to file
       ansible.builtin.copy:
-        content: "nginx installed successfully!!\n"
+        content: "nginx installed successfully-done"
         dest: /tmp/sw_status.txt
 
     - name: Install Apache2
@@ -48,7 +48,7 @@
     - name: Append Apache status to file
       ansible.builtin.lineinfile:
         path: /tmp/sw_status.txt
-        line: "apache installed successfully!!"
+        line: "apache installed successfully-done"
 
     - name: Stop Nginx
       ansible.builtin.service:

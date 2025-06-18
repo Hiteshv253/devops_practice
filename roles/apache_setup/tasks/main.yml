@@ -1,0 +1,25 @@
+---
+# tasks/main.yml
+
+- name: Install Apache2
+  ansible.builtin.apt:
+    name: apache2
+    state: present
+    update_cache: yes
+
+- name: Copy index.html to web root
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Copy apache2.conf to /etc/apache2
+  ansible.builtin.copy:
+    src: apache2.conf
+    dest: /etc/apache2/apache2.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Apache Service
