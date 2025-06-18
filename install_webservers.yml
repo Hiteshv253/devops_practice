@@ -1,0 +1,50 @@
+---
+- name: Install Nginx and Apache with service checks and status file
+  hosts: webservers   # <-- Replace with your inventory group or host(s)
+  become: yes
+
+  tasks:
+
+    - name: Install Nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Write Nginx status to file
+      ansible.builtin.copy:
+        dest: /tmp/sw_status.txt
+        content: "nginx installed successfully!!\n"
+
+    - name: Ensure Nginx is started
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Install Apache (httpd)
+      ansible.builtin.apt:
+        name: apache2
+        state: present
+
+    - name: Append Apache status to file
+      ansible.builtin.lineinfile:
+        path: /tmp/sw_status.txt
+        line: "apache installed successfully!!"
+
+    - name: Stop Nginx to free port 80
+      ansible.builtin.service:
+        name: nginx
+        state: stopped
+
+    - name: Start Apache only if Nginx is stopped
+      ansible.builtin.service:
+        name: apache2
+        state: started
+      when: >
+        ansible_facts.services['nginx.service'].state == 'stopped'
+      vars:
+        ansible_facts:
+          services: "{{ ansible_facts.services | default({}) | combine({'nginx.service': {'state': 'stopped'}}) }}"
+      # fallback in case service facts are not available
+

@@ -1,0 +1,20 @@
+---
+- name: Fix locks, install NGINX, verify and open in Firefox
+  hosts: webservers
+  become: yes
+
+  tasks:
+    - name: Verify that NGINX is running (HTTP check)
+      ansible.builtin.uri:
+        url: "http://localhost"
+      register: nginx_check
+
+    - name: Show HTTP check result
+      ansible.builtin.debug:
+        var: nginx_check
+
+    - name: Open Firefox on the REMOTE machine to access localhost
+      ansible.builtin.shell: |
+        export DISPLAY=:0 && firefox http://localhost &
+      async: 0
+      poll: 0
