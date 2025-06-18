@@ -9,3 +9,6 @@
 #ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i server.txt ansible-paybook.yml
 
 #ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i server.txt install_webservers.yml
+
+
+#ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i server.txt site.yml

@@ -1,0 +1,14 @@
+---
+- name: Setup Kubernetes Cluster
+  hosts: all
+  become: yes
+
+  roles:
+    - kube_install
+
+- name: Deploy project on Kubernetes Master
+  hosts: kube_master
+  become: yes
+
+  roles:
+    - project_deploy

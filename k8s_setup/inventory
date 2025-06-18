@@ -1,0 +1,30 @@
+#[webservers]
+#192.168.190.173 ansible_user=aws ansible_password=root ansible_become_password=root
+
+[kube_master]
+192.168.190.170 ansible_user=aws ansible_password=root ansible_become_password=root
+
+[kube_nodes]
+192.168.190.173 ansible_user=aws ansible_password=root ansible_become_password=root
+
+
+[kubernetes:children]
+kube_master
+kube_nodes
+
+
+
+#ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbook.yml
+
+
+
+#How to run
+#ansible-playbook -i inventory playbook.yml
+
+#How to verify
+#kubectl get nodes
+#kubectl get pods -A
+
+#If you have an Ingress or NodePort — get the public IP:
+#kubectl get svc -A
+

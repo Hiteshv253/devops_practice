@@ -1,0 +1,17 @@
+---
+- name: Install Git
+  ansible.builtin.apt:
+    name: git
+    state: present
+    update_cache: yes
+
+- name: Clone your project repo
+  ansible.builtin.git:
+    repo: https://github.com/Hiteshv253/lions-clubs-International.git
+    dest: /opt/hherp
+
+- name: Apply Kubernetes manifests
+  ansible.builtin.shell: |
+    kubectl apply -f /opt/hherp/k8s/
+  args:
+    chdir: /opt/hherp
