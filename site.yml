@@ -1,7 +1,7 @@
 ---
 - name: Setup Apache on slaves
-  hosts: slaves
-  become: webservers
+  hosts: webservers
+  become: yes
 
   roles:
     - apache_setup
