@@ -6,24 +6,6 @@
 # Usage: chmod +x install_python.sh && ./install_python.sh
 # -----------------------------------------------------------------------------
 
-echo "Updating package list..."
-sudo apt update
-
-echo "Installing Python3..."
-sudo apt install -y python3
-
-echo "Installing pip3..."
-sudo apt install -y python3-pip
-
-echo "Verifying installation..."
-python3 --version
-pip3 --version
-
-echo "Python installation complete!"
-
-
-echo '======================'
-
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
 
 wget -O- https://apt.releases.hashicorp.com/gpg | \
