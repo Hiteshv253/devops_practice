@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# -----------------------------------------------------------------------------
+# Script: install_python.sh
+# Purpose: Install Python 3 and pip on Ubuntu/Debian-based systems.
+# Usage: chmod +x install_python.sh && ./install_python.sh
+# -----------------------------------------------------------------------------
+
+echo "Updating package list..."
+sudo apt update
+
+echo "Installing Python3..."
+sudo apt install -y python3
+
+echo "Installing pip3..."
+sudo apt install -y python3-pip
+
+echo "Verifying installation..."
+python3 --version
+pip3 --version
+
+echo "Python installation complete!"
+
+
+echo '======================'
+
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+gpg --dearmor | \
+sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+
+gpg --no-default-keyring \
+--keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg \
+--fingerprint
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+
+sudo apt update
+
+sudo apt-get install terraform
+
+echo "Terrafrom version"
+
+sudo terraform -v
