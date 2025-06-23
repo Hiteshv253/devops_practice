@@ -46,14 +46,3 @@ resource "aws_instance" "terrafrom-master" {
     volume_type = "gp2"
   }
 }
-
-
-#create s3 buket
-resource "aws_s3_bucket" "example" {
-  bucket = "my-tf-test-bucket-unique-name-123456"
-
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
-  }
-}
