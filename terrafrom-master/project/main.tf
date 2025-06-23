@@ -1,23 +1,12 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0.0"
-    }
-  }
-}
-
-
 resource "aws_instance" "nginx_server" {
-  ami = "ami-09e6f87a47903347c"
-
+  ami           = "ami-0c02fb55956c7d316" # Amazon Linux 2 AMI (region-specific)
   instance_type = "t2.micro"
-  key_name      = var.key_name
+  key_name      = var.key_name  # This must match the Key Pair name in AWS exactly
 
   connection {
     type        = "ssh"
-    user        = "ec2-user"
-    private_key = file("~/.ssh/id_rsa")
+    user        = "ec2-user" # Amazon Linux default user
+    private_key = file(var.pem_file_path)
     host        = self.public_ip
   }
 
@@ -29,5 +18,9 @@ resource "aws_instance" "nginx_server" {
       "sudo systemctl start nginx",
       "sudo git clone https://github.com/Hiteshv253/zenerativeminds.com.git /usr/share/nginx/html"
     ]
+  }
+
+  tags = {
+    Name = "nginx-server"
   }
 }
