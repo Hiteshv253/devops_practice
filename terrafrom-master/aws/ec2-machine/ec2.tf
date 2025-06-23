@@ -7,11 +7,6 @@ terraform {
   }
 }
 
-provider "aws" {
-  region = "us-east-1" # change to your region
-  access_key = "AKIAXDQWT7U2OVHBQEOY"
-  secret_key = "0sWyAakmMlnL66/G3UGdimJH7uqmWmM/RGpcOvgN"
-}
 
 
 // To Generate Private Key
@@ -51,3 +46,4 @@ resource "aws_instance" "terrafrom-master" {
     volume_type = "gp2"
   }
 }
+

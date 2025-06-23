@@ -8,9 +8,9 @@ terraform {
 }
 
 provider "aws" {
-  profile = "default"   # uses [default] block in ~/.aws/credentials
-  region  = "us-east-1" # change to your region
-
+  region     = "us-east-1" # change to your region
+  access_key = "AKIAXDQWT7U2MGSDEJ6W"
+  secret_key = "FdnijyEt+i1AUJ0ojKJjd1+OqeYPyojOVfM4Welc"
 }
 
 resource "aws_instance" "my_instance" {
