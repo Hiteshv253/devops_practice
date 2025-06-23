@@ -6,11 +6,10 @@ terraform {
     }
   }
 }
-
-
 provider "aws" {
 
   region = var.aws_region
+
   access_key = "AKIAXDQWT7U2ISBIMXTY"
   secret_key = "iyL+itSnihJrwbDfsPY3upCTaNyc/nSUf/Ue/nzk"
 }
@@ -51,10 +50,13 @@ resource "aws_instance" "first_instance" {
   tags = {
     Name = "ExampleInstance-${count.index}"
   }
-  
   root_block_device {
     volume_size = 10
     volume_type = "gp2"
+  }
+  
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
