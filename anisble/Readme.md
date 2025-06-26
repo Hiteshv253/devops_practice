@@ -26,6 +26,8 @@ ls -ld  ~/.ssh/known_hosts ## for show yout finger keys
 ##run time to ask password
 ansible-playbook -i inventory.txt main.yml --ask-become-pass
 
+ansible all -i inventory.ini -m ping --ask-pass
+
 
 ### for external script call make sure to permission
 chmod +x install.sh
