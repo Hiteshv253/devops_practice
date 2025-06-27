@@ -3,9 +3,9 @@ variable "key_name" {
 }
 
 variable "instance_count" {
-  description = "NUmber of instance create"
+  description = "Number of instance create"
   type        = string
-  default     = 2
+  default     = 3
 }
 
 variable "ami" {

@@ -23,3 +23,26 @@ Command	Purpose
 terraform plan	Dry run: see what changes will be made
 terraform apply	Actually make the changes
 terraform destroy	Remove resources
+
+
+## list of all resource
+terraform state list 
+
+## Remove resource
+terraform state rm aws_instance.first_instance[1]
+
+
+## Remove destroy
+terraform destroy -target=aws_instance.first_instance[1]
+
+
+## refresh state file
+terraform apply -refresh-only
+
+
+##✅ 1. Instance is Stopped or Crashed
+
+terraform taint aws_instance.my_instance
+terraform apply
+terraform destroy -target=aws_instance.my_instance
+terraform apply

@@ -39,3 +39,11 @@ aws s3 ls: ###Lists all S3 buckets.
 ###CloudFormation:
 ###Lists all CloudFormation stacks. 
 aws cloudformation describe-stacks: 
+
+
+##List only EC2 machines with status
+aws ec2 describe-instances   --query 'Reservations[*].Instances[*].[InstanceId, State.Name, Tags[?Key==`Name`]|[0].Value, PrivateIpAddress, PublicIpAddress,  Placement.AvailabilityZone, SecurityGroups[*].GroupName | join(`, `, @)]'   
+--output table
+
+## Delete Instance
+aws ec2 terminate-instances --instance-ids i-xxxxxxxxxxxxxxxxx
