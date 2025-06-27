@@ -22,7 +22,8 @@ The AWS CLI stores your credentials in a configuration file (usually ~/.aws/cred
 aws sts get-caller-identity
 
 
-##List AWS Services:
+###List AWS Services:
+
 ###Lists all IAM users. 
 aws iam list-users: 
 
@@ -30,7 +31,7 @@ aws iam list-users:
 aws iam list-roles: 
 
 ###EC2 (Elastic Compute Cloud):
-aws ec2 describe-instances: ##Lists all EC2 instances. 
+aws ec2 describe-instances: 
 
 ###S3 (Simple Storage Service):
 aws s3 ls: ###Lists all S3 buckets. 
