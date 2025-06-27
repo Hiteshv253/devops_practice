@@ -7,3 +7,13 @@ sudo rm /var/lib/dpkg/lock
 sudo rm /var/cache/apt/archives/lock
 sudo dpkg --configure -a
 sudo apt update
+
+
+###Install AWS cli for secrite
+sudo apt install awscli
+
+###set access keys
+aws configuer
+
+###check access key are working or not(IN ubantu
+aws sts get-caller-identity
