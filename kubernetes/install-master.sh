@@ -48,6 +48,22 @@ sudo apt-get install -y jq
 sudo systemctl enable --now kubelet
 sudo systemctl start kubelet
 
+sudo kubeadm config images pull --cri-socket unix:///var/run/crio/crio.sock
+
+
+##sudo kubeadm init
+sudo kubeadm init --cri-socket=unix:///var/run/crio/crio.sock
+
+
+mkdir -p "$HOME"/.kube
+sudo cp -i /etc/kubernetes/admin.conf "$HOME"/.kube/config
+sudo chown "$(id -u)":"$(id -g)" "$HOME"/.kube/config
+
+
+# Network Plugin = calico
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml
+
+kubeadm token create --print-join-command
 
 
 sudo kubectl get nodes
@@ -57,3 +73,7 @@ sudo kubectl get nodes
 
 #Test a demo Pod
 ##kubectl run hello-world-pod --image=busybox --restart=Never --command -- sh -c "echo 'Hello, World' && sleep 3600"
+
+
+
+kubeadm join 192.168.190.182:6443 --token l3opro.tdpqh3ntvfws1sow --discovery-token-ca-cert-hash sha256:1960b92e3c8d8a7516f62b7f9bc943ba365d58f16f4f17a1cd7b726eb065233c 
