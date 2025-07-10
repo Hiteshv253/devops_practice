@@ -107,11 +107,11 @@ locals {
 
 # EC2 Instances
 resource "aws_instance" "instances" {
-  count         = length(local.instances)
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  subnet_id     = aws_subnet.public.id
-  key_name      = var.key_name
+  count                  = length(local.instances)
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.public.id
+  key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.instance_sg.id]
 
   tags = {
