@@ -1,126 +1,75 @@
-# Terraform Infrastructure for Jenkins, Dev, Prod, Grafana, and Test Environments
-
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 6.0.0"
+    }
+  }
+}
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
-# Variables
-variable "instance_type" {
-  default = "t2.micro"
+
+resource "tls_private_key" "rsa_4096" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-variable "ami_id" {
-  default = "ami-0c02fb55956c7d316" # Ubuntu 22.04 LTS in us-east-1
+
+// Create Key Pair for Connecting EC2 via SSH
+resource "aws_key_pair" "key_pair" {
+  key_name   = var.key_name
+  public_key = tls_private_key.rsa_4096.public_key_openssh
 }
 
-variable "key_name" {
-  description = "EC2 key pair name for SSH access"
-  type        = string
-  default     = "your-key-name" # <-- Replace with your actual key name
+// Save PEM file locally
+resource "local_file" "private_key" {
+  content  = tls_private_key.rsa_4096.private_key_pem
+  filename = var.key_name
 }
 
-# Local variable for instance names
-locals {
-  instances = [
-    { name = "jenkins" },
-    { name = "dev" },
-    { name = "pro" },
-    { name = "grafana" },
-    { name = "test" }
-  ]
-}
 
-# EC2 Instances
-resource "aws_instance" "instances" {
-  count                  = length(local.instances)
-  ami                    = var.ami_id
-  instance_type          = var.instance_type
-  subnet_id              = aws_subnet.public.id
-  key_name               = var.key_name
-  vpc_security_group_ids = [aws_security_group.instance_sg.id]
+
+resource "aws_instance" "first_instance" {
+  count         = var.instance_count
+  ami           = var.ami
+  instance_type = var.instance_type
+
+  availability_zone = element(var.az_list, count.index) ## select as AZ base count index | use for geting one by one value from val
+
+  key_name = aws_key_pair.key_pair.key_name
+
+  # Attach the Security Group
+  vpc_security_group_ids = [aws_security_group.allow_common.id]
 
   tags = {
-    Name        = local.instances[count.index].name
-    Environment = local.instances[count.index].name
+    Name = "ExampleInstance-${count.index}"
+  }
+  root_block_device {
+    volume_size = 10
+    volume_type = "gp2"
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
-# VPC
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-  tags = {
-    Name = "main-vpc"
-  }
+
+
+## Create Buket of S3
+
+resource "random_id" "suffix" {
+  byte_length = 4
 }
 
-# Subnet
-resource "aws_subnet" "public" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
-  map_public_ip_on_launch = true
-  availability_zone       = "us-east-1a"
-  tags = {
-    Name = "public-subnet"
-  }
-}
-
-# Internet Gateway
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.main.id
-  tags = {
-    Name = "main-gw"
-  }
-}
-
-# Route Table
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.gw.id
-  }
+resource "aws_s3_bucket" "terraform_state" {
+  bucket = "${var.bucket_name}-${random_id.suffix.hex}"
 
   tags = {
-    Name = "public-rt"
-  }
-}
-
-# Associate Route Table to Subnet
-resource "aws_route_table_association" "public" {
-  subnet_id      = aws_subnet.public.id
-  route_table_id = aws_route_table.public.id
-}
-
-# Security Group
-resource "aws_security_group" "instance_sg" {
-  name        = "instance-sg"
-  description = "Allow SSH and HTTP"
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    Name = "TerraformStateBucket"
   }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# Output public IPs
-output "instance_public_ips" {
-  value = aws_instance.instances[*].public_ip
+  force_destroy = true
 }
